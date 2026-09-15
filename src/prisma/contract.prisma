@@ -1,0 +1,756 @@
+// use prisma-next
+
+// ============================================================
+// PROGRACE 360 — DATA CONTRACT
+// PostgreSQL / Prisma 8
+// ============================================================
+
+// =========================
+// USERS & SECURITY
+// =========================
+
+model User {
+  id              Int       @id @default(autoincrement())
+  email           String    @unique
+  passwordHash    String
+  firstName       String?
+  lastName        String?
+  username        String?   @unique
+  avatarUrl       String?
+  bio             String?
+  language        String    @default("fr")
+  currency        String    @default("CDF")
+  country         String    @default("CD")
+  city            String?
+  phone           String?
+  isActive        Boolean   @default(true)
+  emailVerified   Boolean   @default(false)
+  lastLoginAt     TimestamptzString?
+  createdAt       TimestamptzString @default(now())
+  updatedAt       TimestamptzString @default(now())
+
+  roles           UserRole[]
+  sessions        UserSession[]
+  passwordResets  PasswordReset[]
+  emailVerifications EmailVerification[]
+  loginAttempts   LoginAttempt[]
+  auditLogs       AuditLog[]
+  readingProgress ReadingProgress[]
+  bookmarks       Bookmark[]
+  readingHistory  ReadingHistory[]
+  enrollments     Enrollment[]
+  lessonProgress  LessonProgress[]
+  quizAttempts    QuizAttempt[]
+  assignments     AssignmentSubmission[]
+  certificates    Certificate[]
+  orders          Order[]
+  payments        Payment[]
+  entitlements    Entitlement[]
+  favorites       Favorite[]
+  reviews         Review[]
+  conversations   AssistantConversation[]
+  notifications   Notification[]
+  points          Point[]
+  badges           UserBadge[]
+  achievements    Achievement[]
+  analyticsEvents AnalyticsEvent[]
+  carts            Cart[]
+}
+
+model Role {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String?
+  users       UserRole[]
+}
+
+model UserRole {
+  userId Int
+  roleId Int
+
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+}
+
+model UserSession {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  tokenHash    String    @unique
+  expiresAt    TimestamptzString
+  ipAddress    String?
+  userAgent    String?
+  createdAt    TimestamptzString @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  @@index([userId])
+}
+
+model PasswordReset {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  tokenHash  String    @unique
+  expiresAt  TimestamptzString
+  used       Boolean   @default(false)
+  createdAt  TimestamptzString @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  @@index([userId])
+}
+
+model EmailVerification {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  tokenHash  String    @unique
+  expiresAt  TimestamptzString
+  verified   Boolean   @default(false)
+  createdAt  TimestamptzString @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  @@index([userId])
+}
+
+model LoginAttempt {
+  id        Int       @id @default(autoincrement())
+  userId    Int?
+  email     String
+  success   Boolean
+  ipAddress String?
+  userAgent String?
+  createdAt TimestamptzString @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+  @@index([email])
+  @@index([userId])
+}
+
+model AuditLog {
+  id        Int       @id @default(autoincrement())
+  userId    Int?
+  action    String
+  entity    String?
+  entityId  Int?
+  metadata  String?
+  ipAddress String?
+  createdAt TimestamptzString @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+  @@index([userId])
+  @@index([action])
+}
+
+// =========================
+// LIBRARY
+// =========================
+
+model LibraryCategory {
+  id          Int               @id @default(autoincrement())
+  name        String            @unique
+  slug        String            @unique
+  description String?
+  resources   LibraryResource[]
+}
+
+model LibraryAuthor {
+  id        Int               @id @default(autoincrement())
+  name      String
+  bio       String?
+  photoUrl  String?
+  resources LibraryResource[]
+}
+
+model LibraryTag {
+  id        Int            @id @default(autoincrement())
+  name      String         @unique
+  slug      String         @unique
+  resources ResourceTag[]
+}
+
+model LibraryResource {
+  id            Int              @id @default(autoincrement())
+  title         String
+  slug          String           @unique
+  description   String?
+  resourceType  String
+  language      String           @default("fr")
+  coverUrl      String?
+  fileUrl       String?
+  previewUrl    String?
+  isFree        Boolean          @default(false)
+  price         Int              @default(0)
+  currency      String           @default("CDF")
+  published     Boolean          @default(false)
+  featured      Boolean          @default(false)
+  categoryId    Int?
+  authorId      Int?
+  createdAt     TimestamptzString @default(now())
+  updatedAt     TimestamptzString @default(now())
+
+  category      LibraryCategory? @relation(fields: [categoryId], references: [id])
+  author        LibraryAuthor?   @relation(fields: [authorId], references: [id])
+  tags          ResourceTag[]
+  progress      ReadingProgress[]
+  bookmarks     Bookmark[]
+  history       ReadingHistory[]
+  favorites     Favorite[]
+  reviews       Review[]
+  entitlements  Entitlement[]
+
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([resourceType])
+  @@index([published])
+}
+
+model ResourceTag {
+  resourceId Int
+  tagId      Int
+
+  resource LibraryResource @relation(fields: [resourceId], references: [id])
+  tag      LibraryTag      @relation(fields: [tagId], references: [id])
+
+  @@id([resourceId, tagId])
+}
+
+model ReadingProgress {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  resourceId Int
+  progress   Int       @default(0)
+  lastPage   Int       @default(0)
+  completed  Boolean   @default(false)
+  updatedAt  TimestamptzString @default(now())
+
+  user     User            @relation(fields: [userId], references: [id])
+  resource LibraryResource @relation(fields: [resourceId], references: [id])
+
+  @@unique([userId, resourceId])
+}
+
+model Bookmark {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  resourceId Int
+  page       Int?
+  note       String?
+  createdAt  TimestamptzString @default(now())
+
+  user     User            @relation(fields: [userId], references: [id])
+  resource LibraryResource @relation(fields: [resourceId], references: [id])
+
+  @@index([userId])
+  @@index([resourceId])
+}
+
+model ReadingHistory {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  resourceId Int
+  startedAt  TimestamptzString @default(now())
+  finishedAt TimestamptzString?
+
+  user     User            @relation(fields: [userId], references: [id])
+  resource LibraryResource @relation(fields: [resourceId], references: [id])
+
+  @@index([userId])
+}
+
+// =========================
+// LEARNING / FORMATIONS
+// =========================
+
+model Course {
+  id           Int              @id @default(autoincrement())
+  title        String
+  slug         String           @unique
+  description  String?
+  language     String           @default("fr")
+  level        String?
+  category     String?
+  coverUrl     String?
+  price        Int              @default(0)
+  currency     String           @default("CDF")
+  published    Boolean          @default(false)
+  featured     Boolean          @default(false)
+  createdAt    TimestamptzString @default(now())
+  updatedAt    TimestamptzString @default(now())
+
+  sections     CourseSection[]
+  enrollments  Enrollment[]
+  certificates Certificate[]
+}
+
+model CourseSection {
+  id        Int       @id @default(autoincrement())
+  courseId  Int
+  title     String
+  position  Int
+
+  course Course   @relation(fields: [courseId], references: [id])
+  lessons Lesson[]
+
+  @@index([courseId])
+}
+
+model Lesson {
+  id          Int       @id @default(autoincrement())
+  sectionId   Int
+  title       String
+  slug        String
+  content     String?
+  videoUrl    String?
+  duration    Int?
+  position    Int
+  isFree      Boolean   @default(false)
+  published   Boolean   @default(false)
+
+  section       CourseSection   @relation(fields: [sectionId], references: [id])
+  progress      LessonProgress[]
+  quizAttempts  QuizAttempt[]
+  assignments   Assignment[]
+
+  @@index([sectionId])
+}
+
+model Enrollment {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  courseId    Int
+  progress    Int       @default(0)
+  completed   Boolean   @default(false)
+  enrolledAt  TimestamptzString @default(now())
+  completedAt TimestamptzString?
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
+
+model LessonProgress {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  lessonId    Int
+  progress    Int       @default(0)
+  completed   Boolean   @default(false)
+  updatedAt   TimestamptzString @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  lesson Lesson @relation(fields: [lessonId], references: [id])
+
+  @@unique([userId, lessonId])
+}
+
+model QuizAttempt {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  lessonId    Int
+  score       Int       @default(0)
+  passed      Boolean   @default(false)
+  completedAt TimestamptzString @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  lesson Lesson @relation(fields: [lessonId], references: [id])
+  answers QuizAnswer[]
+
+  @@index([userId])
+  @@index([lessonId])
+}
+
+model QuizAnswer {
+  id         Int       @id @default(autoincrement())
+  attemptId  Int
+  question   String
+  answer     String?
+  correct    Boolean   @default(false)
+
+  attempt QuizAttempt @relation(fields: [attemptId], references: [id])
+
+  @@index([attemptId])
+}
+
+model Assignment {
+  id        Int       @id @default(autoincrement())
+  lessonId  Int
+  title     String
+  statement String
+  deadline  TimestamptzString?
+
+  lesson      Lesson                  @relation(fields: [lessonId], references: [id])
+  submissions AssignmentSubmission[]
+}
+
+model AssignmentSubmission {
+  id           Int       @id @default(autoincrement())
+  assignmentId Int
+  userId       Int
+  content      String
+  score        Int?
+  feedback     String?
+  submittedAt  TimestamptzString @default(now())
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+
+  @@index([assignmentId])
+  @@index([userId])
+}
+
+model Certificate {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  courseId   Int
+  code       String    @unique
+  issuedAt   TimestamptzString @default(now())
+  certificateUrl String?
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
+
+// =========================
+// STORE / PRODUCTS
+// =========================
+
+model Product {
+  id           Int              @id @default(autoincrement())
+  name         String
+  slug         String           @unique
+  description  String?
+  productType  String
+  imageUrl     String?
+  active       Boolean          @default(true)
+  featured     Boolean          @default(false)
+  createdAt    TimestamptzString @default(now())
+  updatedAt    TimestamptzString @default(now())
+
+  prices       ProductPrice[]
+  orderItems   OrderItem[]
+  favorites    Favorite[]
+  reviews      Review[]
+}
+
+model ProductPrice {
+  id        Int    @id @default(autoincrement())
+  productId Int
+  currency  String
+  amount    Int
+  active    Boolean @default(true)
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([productId, currency])
+}
+
+model Cart {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  createdAt TimestamptzString @default(now())
+  updatedAt TimestamptzString @default(now())
+
+  user  User       @relation(fields: [userId], references: [id])
+  items CartItem[]
+
+  @@unique([userId])
+}
+
+model CartItem {
+  id        Int @id @default(autoincrement())
+  cartId    Int
+  productId Int
+  quantity  Int @default(1)
+
+  cart    Cart    @relation(fields: [cartId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
+}
+
+model Order {
+  id             Int              @id @default(autoincrement())
+  userId         Int?
+  orderNumber    String           @unique
+  status         String           @default("pending")
+  currency       String           @default("CDF")
+  subtotal       Int              @default(0)
+  discount       Int              @default(0)
+  total          Int              @default(0)
+  customerEmail  String
+  customerName   String?
+  createdAt      TimestamptzString @default(now())
+  updatedAt      TimestamptzString @default(now())
+
+  user         User?       @relation(fields: [userId], references: [id])
+  items        OrderItem[]
+  payments     Payment[]
+  entitlements Entitlement[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id          Int    @id @default(autoincrement())
+  orderId     Int
+  productId   Int
+  quantity    Int    @default(1)
+  unitPrice   Int
+  total       Int
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Payment {
+  id              Int              @id @default(autoincrement())
+  orderId         Int
+  userId          Int?
+  provider        String
+  transactionId   String?
+  status          String           @default("pending")
+  amount          Int
+  currency        String
+  metadata        String?
+  paidAt          TimestamptzString?
+  createdAt       TimestamptzString @default(now())
+
+  order Order @relation(fields: [orderId], references: [id])
+  user  User?  @relation(fields: [userId], references: [id])
+
+  @@index([orderId])
+  @@index([transactionId])
+}
+
+model Entitlement {
+  id         Int              @id @default(autoincrement())
+  userId     Int
+  resourceId Int?
+  orderId    Int?
+  productId  Int?
+  grantedAt  TimestamptzString @default(now())
+  expiresAt  TimestamptzString?
+
+  user     User             @relation(fields: [userId], references: [id])
+  resource LibraryResource? @relation(fields: [resourceId], references: [id])
+  order    Order?           @relation(fields: [orderId], references: [id])
+
+  @@index([userId])
+  @@index([resourceId])
+}
+
+// =========================
+// FAVORITES / REVIEWS
+// =========================
+
+model Favorite {
+  id         Int              @id @default(autoincrement())
+  userId     Int
+  productId  Int?
+  resourceId Int?
+  createdAt  TimestamptzString @default(now())
+
+  user     User             @relation(fields: [userId], references: [id])
+  product  Product?         @relation(fields: [productId], references: [id])
+  resource LibraryResource? @relation(fields: [resourceId], references: [id])
+
+  @@index([userId])
+  @@index([productId])
+  @@index([resourceId])
+}
+
+model Review {
+  id         Int              @id @default(autoincrement())
+  userId     Int
+  productId  Int?
+  resourceId Int?
+  rating     Int
+  comment    String?
+  approved   Boolean          @default(false)
+  createdAt  TimestamptzString @default(now())
+
+  user     User             @relation(fields: [userId], references: [id])
+  product  Product?         @relation(fields: [productId], references: [id])
+  resource LibraryResource? @relation(fields: [resourceId], references: [id])
+
+  @@index([productId])
+  @@index([resourceId])
+}
+
+// =========================
+// INSIGHTS
+// =========================
+
+model Article {
+  id          Int              @id @default(autoincrement())
+  title       String
+  slug        String           @unique
+  excerpt     String?
+  content     String
+  coverUrl    String?
+  authorName  String?
+  category    String?
+  language    String           @default("fr")
+  published   Boolean          @default(false)
+  featured    Boolean          @default(false)
+  createdAt   TimestamptzString @default(now())
+  updatedAt   TimestamptzString @default(now())
+
+  tags ArticleTag[]
+}
+
+model ArticleTag {
+  id        Int    @id @default(autoincrement())
+  articleId Int
+  name      String
+
+  article Article @relation(fields: [articleId], references: [id])
+
+  @@unique([articleId, name])
+}
+
+// =========================
+// AI ASSISTANT
+// =========================
+
+model AssistantConversation {
+  id        Int              @id @default(autoincrement())
+  userId    Int?
+  title     String?
+  createdAt TimestamptzString @default(now())
+  updatedAt TimestamptzString @default(now())
+
+  user     User?              @relation(fields: [userId], references: [id])
+  messages AssistantMessage[]
+
+  @@index([userId])
+}
+
+model AssistantMessage {
+  id             Int              @id @default(autoincrement())
+  conversationId Int
+  role           String
+  content        String
+  createdAt      TimestamptzString @default(now())
+
+  conversation AssistantConversation @relation(fields: [conversationId], references: [id])
+  sources      AssistantSource[]
+
+  @@index([conversationId])
+}
+
+model AssistantSource {
+  id        Int    @id @default(autoincrement())
+  messageId Int
+  title     String?
+  url       String?
+  sourceType String?
+
+  message AssistantMessage @relation(fields: [messageId], references: [id])
+
+  @@index([messageId])
+}
+
+// =========================
+// NOTIFICATIONS
+// =========================
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  title     String
+  message   String
+  type      String           @default("info")
+  read      Boolean          @default(false)
+  createdAt TimestamptzString @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([read])
+}
+
+// =========================
+// GAMIFICATION
+// =========================
+
+model Point {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  amount    Int
+  reason    String
+  createdAt TimestamptzString @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Badge {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  slug        String     @unique
+  description String?
+  iconUrl     String?
+  users       UserBadge[]
+}
+
+model UserBadge {
+  userId     Int
+  badgeId    Int
+  awardedAt  TimestamptzString @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  badge Badge @relation(fields: [badgeId], references: [id])
+
+  @@id([userId, badgeId])
+}
+
+model Achievement {
+  id          Int              @id @default(autoincrement())
+  userId      Int
+  name        String
+  description String?
+  completed   Boolean          @default(false)
+  completedAt TimestamptzString?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+// =========================
+// ANALYTICS
+// =========================
+
+model AnalyticsEvent {
+  id         Int              @id @default(autoincrement())
+  userId     Int?
+  eventName  String
+  path       String?
+  metadata   String?
+  createdAt  TimestamptzString @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([eventName])
+  @@index([createdAt])
+}
+
+// =========================
+// ADMIN SETTINGS
+// =========================
+
+model AdminSetting {
+  id          Int              @id @default(autoincrement())
+  key         String           @unique
+  value       String?
+  description String?
+  updatedAt   TimestamptzString @default(now())
+}

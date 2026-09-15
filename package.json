@@ -1,8 +1,32 @@
 {
   "name": "prograce-360",
+  "type": "module",
   "version": "0.1.0",
   "private": true,
-  "scripts": {"dev":"next dev","build":"next build","start":"next start","lint":"eslint"},
-  "dependencies": {"next":"16.3.4","react":"19.2.0","react-dom":"19.2.0"},
-  "devDependencies": {"@types/node":"latest","@types/react":"latest","@types/react-dom":"latest","eslint":"latest","eslint-config-next":"16.3.4","typescript":"latest"}
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "contract:emit": "prisma contract emit"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
+    "dotenv": "^17.4.2",
+    "next": "16.3.4",
+    "pg": "^8.23.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "@prisma/cli-engine": "^0.3.0",
+    "@prisma/orm-postgres": "^8.0.0-rc.11",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "16.3.4",
+    "prisma": "^8.0.0-rc.14",
+    "typescript": "latest"
+  }
 }
