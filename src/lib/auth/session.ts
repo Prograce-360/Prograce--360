@@ -7,8 +7,10 @@ export const SESSION_COOKIE = "prograce_session";
 
 const SESSION_DAYS = 30;
 
-function hashToken(token: string) {
-  return createHash("sha256").update(token).digest("hex");
+function hashToken(token: string): string {
+  return createHash("sha256")
+    .update(token)
+    .digest("hex");
 }
 
 export async function createSession(userId: number) {
@@ -17,7 +19,8 @@ export async function createSession(userId: number) {
   const tokenHash = hashToken(token);
 
   const expiresAt = new Date(
-    Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000,
+    Date.now() +
+      SESSION_DAYS * 24 * 60 * 60 * 1000,
   ).toISOString();
 
   await db.orm.public.UserSession.create({
@@ -42,7 +45,10 @@ export async function createSession(userId: number) {
 export async function getSessionToken() {
   const cookieStore = await cookies();
 
-  return cookieStore.get(SESSION_COOKIE)?.value ?? null;
+  return (
+    cookieStore.get(SESSION_COOKIE)?.value ??
+    null
+  );
 }
 
 export async function getUserFromSessionToken(
@@ -54,9 +60,10 @@ export async function getUserFromSessionToken(
 
   const tokenHash = hashToken(token);
 
-  const session = await db.orm.public.UserSession
-    .where({ tokenHash })
-    .first();
+  const session =
+    await db.orm.public.UserSession
+      .where({ tokenHash })
+      .first();
 
   if (!session) {
     return null;
@@ -73,9 +80,10 @@ export async function getUserFromSessionToken(
     return null;
   }
 
-  const user = await db.orm.public.User
-    .where({ id: session.userId })
-    .first();
+  const user =
+    await db.orm.public.User
+      .where({ id: session.userId })
+      .first();
 
   if (!user || !user.isActive) {
     return null;
