@@ -1,13 +1,16 @@
 import { NextResponse } from "next/server";
-import { verifyPassword } from "@/src/lib/authentification/mot_de_passe";
-import { findUserByEmail } from "@/src/lib/authentification/utilisateur";
-import { createSession } from "@/src/lib/authentification/session";
+import { verifyPassword } from "@/src/lib/auth/password";
+import { findUserByEmail } from "@/src/lib/auth/user";
+import { createSession } from "@/src/lib/auth/session";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const email = String(body.email ?? "").trim().toLowerCase();
+    const email = String(body.email ?? "")
+      .trim()
+      .toLowerCase();
+
     const password = String(body.password ?? "");
 
     if (!email || !password) {
@@ -24,14 +27,19 @@ export async function POST(request: Request) {
 
     if (!user) {
       return NextResponse.json(
-        { error: "E-mail ou mot de passe incorrect." },
+        {
+          error: "E-mail ou mot de passe incorrect.",
+        },
         { status: 401 },
       );
     }
 
     if (!user.isActive) {
       return NextResponse.json(
-        { error: "Ce compte est actuellement désactivé." },
+        {
+          error:
+            "Ce compte est actuellement désactivé.",
+        },
         { status: 403 },
       );
     }
@@ -43,7 +51,9 @@ export async function POST(request: Request) {
 
     if (!validPassword) {
       return NextResponse.json(
-        { error: "E-mail ou mot de passe incorrect." },
+        {
+          error: "E-mail ou mot de passe incorrect.",
+        },
         { status: 401 },
       );
     }
@@ -71,4 +81,4 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
-}
+        }
