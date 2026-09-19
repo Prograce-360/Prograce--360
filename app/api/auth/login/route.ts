@@ -12,7 +12,10 @@ export async function POST(request: Request) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: "Veuillez renseigner votre e-mail et votre mot de passe." },
+        {
+          error:
+            "Veuillez renseigner votre e-mail et votre mot de passe.",
+        },
         { status: 400 },
       );
     }
@@ -69,34 +72,3 @@ export async function POST(request: Request) {
     );
   }
 }
-                                                                                                                                                if (!valid) {
-                                                                                                                                                      return NextResponse.json(
-                                                                                                                                                              { error: "E-mail ou mot de passe incorrect." },
-                                                                                                                                                                      { status: 401 },
-                                                                                                                                                                            );
-                                                                                                                                                                                }
-
-                                                                                                                                                                                    await createSession(user.id);
-
-                                                                                                                                                                                        return NextResponse.json({
-                                                                                                                                                                                              ok: true,
-                                                                                                                                                                                                    user: {
-                                                                                                                                                                                                            id: user.id,
-                                                                                                                                                                                                                    email: user.email,
-                                                                                                                                                                                                                            firstName: user.firstName,
-                                                                                                                                                                                                                                    lastName: user.lastName,
-                                                                                                                                                                                                                                            username: user.username,
-                                                                                                                                                                                                                                                  },
-                                                                                                                                                                                                                                                      });
-                                                                                                                                                                                                                                                        } catch (error) {
-                                                                                                                                                                                                                                                            console.error("LOGIN_ERROR", error);
-
-                                                                                                                                                                                                                                                                return NextResponse.json(
-                                                                                                                                                                                                                                                                      {
-                                                                                                                                                                                                                                                                              error:
-                                                                                                                                                                                                                                                                                        "Impossible de vous connecter pour le moment.",
-                                                                                                                                                                                                                                                                                              },
-                                                                                                                                                                                                                                                                                                    { status: 500 },
-                                                                                                                                                                                                                                                                                                        );
-                                                                                                                                                                                                                                                                                                          }
-                                                                                                                                                                                                                                                                                                          }
