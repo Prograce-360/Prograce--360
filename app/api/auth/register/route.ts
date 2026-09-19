@@ -20,8 +20,7 @@ export async function POST(request: Request) {
     if (!email || !password || !firstName) {
       return NextResponse.json(
         {
-          error:
-            "Veuillez remplir les champs obligatoires.",
+          error: "Veuillez remplir les champs obligatoires.",
         },
         { status: 400 },
       );
@@ -42,8 +41,7 @@ export async function POST(request: Request) {
     if (existingEmail) {
       return NextResponse.json(
         {
-          error:
-            "Cette adresse e-mail est déjà utilisée.",
+          error: "Cette adresse e-mail est déjà utilisée.",
         },
         { status: 409 },
       );
@@ -98,4 +96,4 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
-}
+  }
