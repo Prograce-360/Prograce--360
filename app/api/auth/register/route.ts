@@ -1,26 +1,39 @@
 import { NextResponse } from "next/server";
-import { hashPassword } from "@/src/lib/authentification/mot_de_passe";
+import { hashPassword } from "@/src/lib/auth/password";
 import {
   createUser,
   findUserByEmail,
   findUserByUsername,
-} from "@/src/lib/authentification/utilisateur";
-import { createSession } from "@/src/lib/authentification/session";
+} from "@/src/lib/auth/user";
+import { createSession } from "@/src/lib/auth/session";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const email = String(body.email ?? "").trim().toLowerCase();
+    const email = String(body.email ?? "")
+      .trim()
+      .toLowerCase();
+
     const password = String(body.password ?? "");
-    const firstName = String(body.firstName ?? "").trim();
-    const lastName = String(body.lastName ?? "").trim();
-    const username = String(body.username ?? "").trim();
+
+    const firstName = String(
+      body.firstName ?? "",
+    ).trim();
+
+    const lastName = String(
+      body.lastName ?? "",
+    ).trim();
+
+    const username = String(
+      body.username ?? "",
+    ).trim();
 
     if (!email || !password || !firstName) {
       return NextResponse.json(
         {
-          error: "Veuillez remplir les champs obligatoires.",
+          error:
+            "Veuillez remplir les champs obligatoires.",
         },
         { status: 400 },
       );
@@ -36,12 +49,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const existingEmail = await findUserByEmail(email);
+    const existingEmail =
+      await findUserByEmail(email);
 
     if (existingEmail) {
       return NextResponse.json(
         {
-          error: "Cette adresse e-mail est déjà utilisée.",
+          error:
+            "Cette adresse e-mail est déjà utilisée.",
         },
         { status: 409 },
       );
@@ -96,4 +111,4 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
-        }
+  }
