@@ -1,45 +1,47 @@
 import {
-      randomBytes,
-        scryptSync,
-          timingSafeEqual,
-          } from "node:crypto";
+  randomBytes,
+  scryptSync,
+  timingSafeEqual,
+} from "node:crypto";
 
-          const KEY_LENGTH = 64;
+const KEY_LENGTH = 64;
 
-          export function hashPassword(password: string): string {
-            const salt = randomBytes(16).toString("hex");
+export function hashPassword(password: string): string {
+  const salt = randomBytes(16).toString("hex");
 
-              const hash = scryptSync(
-                  password,
-                      salt,
-                          KEY_LENGTH
-                            ).toString("hex");
+  const hash = scryptSync(
+    password,
+    salt,
+    KEY_LENGTH,
+  ).toString("hex");
 
-                              return `${salt}:${hash}`;
-                              }
+  return `${salt}:${hash}`;
+}
 
-                              export function verifyPassword(
-                                password: string,
-                                  storedHash: string,
-                                  ): boolean {
-                                    const [salt, key] = storedHash.split(":");
+export function verifyPassword(
+  password: string,
+  storedHash: string,
+): boolean {
+  const [salt, key] = storedHash.split(":");
 
-                                      if (!salt || !key) return false;
+  if (!salt || !key) {
+    return false;
+  }
 
-                                        const storedKey = Buffer.from(key, "hex");
-                                          const derivedKey = scryptSync(
-                                              password,
-                                                  salt,
-                                                      KEY_LENGTH
-                                                        );
+  const storedKey = Buffer.from(key, "hex");
 
-                                                          if (storedKey.length !== derivedKey.length) {
-                                                              return false;
-                                                                }
+  const derivedKey = scryptSync(
+    password,
+    salt,
+    KEY_LENGTH,
+  );
 
-                                                                  return timingSafeEqual(
-                                                                      storedKey,
-                                                                          derivedKey
-                                                                            );
-                                                                            }
+  if (storedKey.length !== derivedKey.length) {
+    return false;
+  }
+
+  return timingSafeEqual(
+    storedKey,
+    derivedKey,
+  );
 }
