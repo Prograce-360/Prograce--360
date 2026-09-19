@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCurrentUser } from "@/src/lib/authentification/session";
+import { getCurrentUser } from "@/src/lib/auth/session";
 
 export async function GET() {
   try {
@@ -7,7 +7,9 @@ export async function GET() {
 
     if (!user) {
       return NextResponse.json(
-        { error: "Non authentifié." },
+        {
+          error: "Non authentifié.",
+        },
         { status: 401 },
       );
     }
