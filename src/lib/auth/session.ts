@@ -118,4 +118,4 @@ export async function destroySession() {
     path: "/",
     maxAge: 0,
   });
-    }
+}
