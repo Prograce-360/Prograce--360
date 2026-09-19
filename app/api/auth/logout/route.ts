@@ -1,18 +1,21 @@
 import { NextResponse } from "next/server";
-
-import { destroySession } from "@/src/lib/auth/session";
+import { destroySession } from "@/src/lib/authentification/session";
 
 export async function POST() {
   try {
-      await destroySession();
+    await destroySession();
 
-          return NextResponse.json({ ok: true });
-            } catch (error) {
-                console.error("LOGOUT_ERROR", error);
+    return NextResponse.json({
+      ok: true,
+    });
+  } catch (error) {
+    console.error("LOGOUT_ERROR", error);
 
-                    return NextResponse.json(
-                          { error: "Impossible de fermer la session." },
-                                { status: 500 },
-                                    );
-                                      }
-                                      }
+    return NextResponse.json(
+      {
+        error: "Impossible de fermer la session.",
+      },
+      { status: 500 },
+    );
+  }
+}
