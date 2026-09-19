@@ -19,7 +19,10 @@ export async function POST(request: Request) {
 
     if (!email || !password || !firstName) {
       return NextResponse.json(
-        { error: "Veuillez remplir les champs obligatoires." },
+        {
+          error:
+            "Veuillez remplir les champs obligatoires.",
+        },
         { status: 400 },
       );
     }
@@ -38,7 +41,10 @@ export async function POST(request: Request) {
 
     if (existingEmail) {
       return NextResponse.json(
-        { error: "Cette adresse e-mail est déjà utilisée." },
+        {
+          error:
+            "Cette adresse e-mail est déjà utilisée.",
+        },
         { status: 409 },
       );
     }
@@ -92,52 +98,4 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
-          }                                                                                                                      return NextResponse.json(
-                                                                                                                              { error: "Cette adresse e-mail est déjà utilisée." },
-                                                                                                                                      { status: 409 },
-                                                                                                                                            );
-                                                                                                                                                }
-
-                                                                                                                                                    if (username) {
-                                                                                                                                                          const existingUsername = await findUserByUsername(username);
-
-                                                                                                                                                                if (existingUsername) {
-                                                                                                                                                                        return NextResponse.json(
-                                                                                                                                                                                  { error: "Ce nom d'utilisateur est déjà utilisé." },
-                                                                                                                                                                                            { status: 409 },
-                                                                                                                                                                                                    );
-                                                                                                                                                                                                          }
-                                                                                                                                                                                                              }
-
-                                                                                                                                                                                                                  const user = await createUser({
-                                                                                                                                                                                                                        email,
-                                                                                                                                                                                                                              passwordHash: hashPassword(password),
-                                                                                                                                                                                                                                    firstName,
-                                                                                                                                                                                                                                          lastName,
-                                                                                                                                                                                                                                                username: username || undefined,
-                                                                                                                                                                                                                                                    });
-
-                                                                                                                                                                                                                                                        await createSession(user.id);
-
-                                                                                                                                                                                                                                                            return NextResponse.json(
-                                                                                                                                                                                                                                                                  {
-                                                                                                                                                                                                                                                                          ok: true,
-                                                                                                                                                                                                                                                                                  user: {
-                                                                                                                                                                                                                                                                                            id: user.id,
-                                                                                                                                                                                                                                                                                                      email: user.email,
-                                                                                                                                                                                                                                                                                                                firstName: user.firstName,
-                                                                                                                                                                                                                                                                                                                          lastName: user.lastName,
-                                                                                                                                                                                                                                                                                                                                    username: user.username,
-                                                                                                                                                                                                                                                                                                                                            },
-                                                                                                                                                                                                                                                                                                                                                  },
-                                                                                                                                                                                                                                                                                                                                                        { status: 201 },
-                                                                                                                                                                                                                                                                                                                                                            );
-                                                                                                                                                                                                                                                                                                                                                              } catch (error) {
-                                                                                                                                                                                                                                                                                                                                                                  console.error("REGISTER_ERROR", error);
-
-                                                                                                                                                                                                                                                                                                                                                                      return NextResponse.json(
-                                                                                                                                                                                                                                                                                                                                                                            { error: "Impossible de créer le compte pour le moment." },
-                                                                                                                                                                                                                                                                                                                                                                                  { status: 500 },
-                                                                                                                                                                                                                                                                                                                                                                                      );
-                                                                                                                                                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                                                                                                                                                        }
+}
