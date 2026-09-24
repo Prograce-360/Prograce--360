@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { verifyPassword } from "@/src/lib/auth/password";
-import { findUserByEmail } from "@/src/lib/auth/user";
-import { createSession } from "@/src/lib/auth/session";
+
+import { verifyPassword } from "@/src/lib/authentification/mot_de_passe";
+import { findUserByEmail } from "@/src/lib/authentification/utilisateur";
+import { createSession } from "@/src/lib/authentification/session";
 
 export async function POST(request: Request) {
   try {
@@ -81,4 +82,4 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
-        }
+}
