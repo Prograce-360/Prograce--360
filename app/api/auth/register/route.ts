@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import { hashPassword } from "@/src/lib/auth/password";
+
+import { hashPassword } from "@/src/lib/authentification/mot_de_passe";
 import {
   createUser,
   findUserByEmail,
   findUserByUsername,
-} from "@/src/lib/auth/user";
-import { createSession } from "@/src/lib/auth/session";
+} from "@/src/lib/authentification/utilisateur";
+import { createSession } from "@/src/lib/authentification/session";
 
 export async function POST(request: Request) {
   try {
@@ -111,4 +112,4 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
-  }
+}
