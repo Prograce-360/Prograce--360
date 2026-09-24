@@ -5,9 +5,10 @@ import {
 } from "node:crypto";
 
 const KEY_LENGTH = 64;
+const SALT_LENGTH = 16;
 
 export function hashPassword(password: string): string {
-  const salt = randomBytes(16).toString("hex");
+  const salt = randomBytes(SALT_LENGTH).toString("hex");
 
   const hash = scryptSync(
     password,
@@ -25,6 +26,18 @@ export function verifyPassword(
   const [salt, key] = storedHash.split(":");
 
   if (!salt || !key) {
+    return false;
+  }
+
+  if (salt.length !== SALT_LENGTH * 2) {
+    return false;
+  }
+
+  if (key.length !== KEY_LENGTH * 2) {
+    return false;
+  }
+
+  if (!/^[0-9a-f]+$/i.test(salt) || !/^[0-9a-f]+$/i.test(key)) {
     return false;
   }
 
