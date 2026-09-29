@@ -253,6 +253,38 @@ une vraie classe .button.
     0 16px 35px rgba(7, 91, 255, 0.28);
 }
 
+.primary,
+.button.primary {
+  background:
+    linear-gradient(
+      135deg,
+      var(--blue),
+      var(--blue-2)
+    );
+
+  color: #ffffff;
+
+  border: 0;
+
+  box-shadow:
+    0 10px 25px rgba(7, 91, 255, 0.20);
+}
+
+.primary:hover,
+.button.primary:hover {
+  background:
+    linear-gradient(
+      135deg,
+      var(--blue),
+      var(--blue-2)
+    );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 16px 35px rgba(7, 91, 255, 0.28);
+}
+
 .outline,
 .button.outline {
   background: rgba(255, 255, 255, 0.8) !important;
