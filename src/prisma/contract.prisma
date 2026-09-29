@@ -29,32 +29,32 @@ model User {
   createdAt       TimestamptzString @default(now())
   updatedAt       TimestamptzString @default(now())
 
-  roles           UserRole[]
-  sessions        UserSession[]
-  passwordResets  PasswordReset[]
+  roles              UserRole[]
+  sessions           UserSession[]
+  passwordResets     PasswordReset[]
   emailVerifications EmailVerification[]
-  loginAttempts   LoginAttempt[]
-  auditLogs       AuditLog[]
-  readingProgress ReadingProgress[]
-  bookmarks       Bookmark[]
-  readingHistory  ReadingHistory[]
-  enrollments     Enrollment[]
-  lessonProgress  LessonProgress[]
-  quizAttempts    QuizAttempt[]
-  assignments     AssignmentSubmission[]
-  certificates    Certificate[]
-  orders          Order[]
-  payments        Payment[]
-  entitlements    Entitlement[]
-  favorites       Favorite[]
-  reviews         Review[]
-  conversations   AssistantConversation[]
-  notifications   Notification[]
-  points          Point[]
-  badges           UserBadge[]
-  achievements    Achievement[]
-  analyticsEvents AnalyticsEvent[]
-  carts            Cart[]
+  loginAttempts      LoginAttempt[]
+  auditLogs          AuditLog[]
+  readingProgress    ReadingProgress[]
+  bookmarks          Bookmark[]
+  readingHistory     ReadingHistory[]
+  enrollments        Enrollment[]
+  lessonProgress     LessonProgress[]
+  quizAttempts       QuizAttempt[]
+  assignments        AssignmentSubmission[]
+  certificates       Certificate[]
+  orders             Order[]
+  payments           Payment[]
+  entitlements       Entitlement[]
+  favorites          Favorite[]
+  reviews            Review[]
+  conversations      AssistantConversation[]
+  notifications      Notification[]
+  points             Point[]
+  badges             UserBadge[]
+  achievements       Achievement[]
+  analyticsEvents    AnalyticsEvent[]
+  carts              Cart[]
 }
 
 model Role {
@@ -84,6 +84,7 @@ model UserSession {
   createdAt    TimestamptzString @default(now())
 
   user User @relation(fields: [userId], references: [id])
+
   @@index([userId])
 }
 
@@ -96,6 +97,7 @@ model PasswordReset {
   createdAt  TimestamptzString @default(now())
 
   user User @relation(fields: [userId], references: [id])
+
   @@index([userId])
 }
 
@@ -108,6 +110,7 @@ model EmailVerification {
   createdAt  TimestamptzString @default(now())
 
   user User @relation(fields: [userId], references: [id])
+
   @@index([userId])
 }
 
@@ -121,6 +124,7 @@ model LoginAttempt {
   createdAt TimestamptzString @default(now())
 
   user User? @relation(fields: [userId], references: [id])
+
   @@index([email])
   @@index([userId])
 }
@@ -136,6 +140,7 @@ model AuditLog {
   createdAt TimestamptzString @default(now())
 
   user User? @relation(fields: [userId], references: [id])
+
   @@index([userId])
   @@index([action])
 }
@@ -287,7 +292,7 @@ model CourseSection {
   title     String
   position  Int
 
-  course Course   @relation(fields: [courseId], references: [id])
+  course  Course   @relation(fields: [courseId], references: [id])
   lessons Lesson[]
 
   @@index([courseId])
@@ -305,11 +310,12 @@ model Lesson {
   isFree      Boolean   @default(false)
   published   Boolean   @default(false)
 
-  section       CourseSection   @relation(fields: [sectionId], references: [id])
-  progress      LessonProgress[]
-  quizAttempts  QuizAttempt[]
-  assignments   Assignment[]
+  section      CourseSection   @relation(fields: [sectionId], references: [id])
+  progress     LessonProgress[]
+  quizAttempts QuizAttempt[]
+  assignments  Assignment[]
 
+  @@unique([sectionId, slug])
   @@index([sectionId])
 }
 
@@ -398,12 +404,12 @@ model AssignmentSubmission {
 }
 
 model Certificate {
-  id         Int       @id @default(autoincrement())
-  userId     Int
-  courseId   Int
-  code       String    @unique
-  issuedAt   TimestamptzString @default(now())
-  certificateUrl String?
+  id              Int              @id @default(autoincrement())
+  userId          Int
+  courseId        Int
+  code            String           @unique
+  issuedAt        TimestamptzString @default(now())
+  certificateUrl  String?
 
   user   User   @relation(fields: [userId], references: [id])
   course Course @relation(fields: [courseId], references: [id])
@@ -431,6 +437,7 @@ model Product {
   orderItems   OrderItem[]
   favorites    Favorite[]
   reviews      Review[]
+  entitlements Entitlement[]
 }
 
 model ProductPrice {
@@ -483,7 +490,7 @@ model Order {
   createdAt      TimestamptzString @default(now())
   updatedAt      TimestamptzString @default(now())
 
-  user         User?       @relation(fields: [userId], references: [id])
+  user         User?          @relation(fields: [userId], references: [id])
   items        OrderItem[]
   payments     Payment[]
   entitlements Entitlement[]
@@ -539,9 +546,12 @@ model Entitlement {
   user     User             @relation(fields: [userId], references: [id])
   resource LibraryResource? @relation(fields: [resourceId], references: [id])
   order    Order?           @relation(fields: [orderId], references: [id])
+  product  Product?         @relation(fields: [productId], references: [id])
 
   @@index([userId])
   @@index([resourceId])
+  @@index([productId])
+  @@index([orderId])
 }
 
 // =========================
@@ -559,7 +569,8 @@ model Favorite {
   product  Product?         @relation(fields: [productId], references: [id])
   resource LibraryResource? @relation(fields: [resourceId], references: [id])
 
-  @@index([userId])
+  @@unique([userId, productId])
+  @@unique([userId, resourceId])
   @@index([productId])
   @@index([resourceId])
 }
@@ -578,6 +589,8 @@ model Review {
   product  Product?         @relation(fields: [productId], references: [id])
   resource LibraryResource? @relation(fields: [resourceId], references: [id])
 
+  @@unique([userId, productId])
+  @@unique([userId, resourceId])
   @@index([productId])
   @@index([resourceId])
 }
@@ -645,10 +658,10 @@ model AssistantMessage {
 }
 
 model AssistantSource {
-  id        Int    @id @default(autoincrement())
-  messageId Int
-  title     String?
-  url       String?
+  id         Int    @id @default(autoincrement())
+  messageId  Int
+  title      String?
+  url        String?
   sourceType String?
 
   message AssistantMessage @relation(fields: [messageId], references: [id])
