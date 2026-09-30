@@ -25,6 +25,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify authentication files
+        run: |
+          pwd
+          echo "=== src/lib ==="
+          ls -la src/lib
+          echo "=== src/lib/authentification ==="
+          ls -la src/lib/authentification
+          echo "=== Git tracked authentication files ==="
+          git ls-files | grep '^src/lib/authentification/'
+
       - name: Generate Prisma contract
         run: npm run contract:emit
 
