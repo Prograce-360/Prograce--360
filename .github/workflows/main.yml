@@ -27,13 +27,17 @@ jobs:
 
       - name: Verify authentication files
         run: |
-          pwd
-          echo "=== src/lib ==="
-          ls -la src/lib
-          echo "=== src/lib/authentification ==="
-          ls -la src/lib/authentification
-          echo "=== Git tracked authentication files ==="
-          git ls-files | grep '^src/lib/authentification/'
+          echo "=== Current commit ==="
+          git rev-parse HEAD
+
+          echo "=== Branch ==="
+          git branch --show-current
+
+          echo "=== Authentication paths tracked by Git ==="
+          git ls-files | grep -E '^src/lib/(auth|authentification)/' || true
+
+          echo "=== src/lib tree ==="
+          find src/lib -maxdepth 2 -type f -print | sort
 
       - name: Generate Prisma contract
         run: npm run contract:emit
