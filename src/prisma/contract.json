@@ -2235,6 +2235,22 @@
                   "namespace": "public"
                 }
               },
+              "product": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "productId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Product",
+                  "namespace": "public"
+                }
+              },
               "resource": {
                 "cardinality": "N:1",
                 "nullable": true,
@@ -4090,6 +4106,21 @@
               }
             },
             "relations": {
+              "entitlements": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "productId"
+                  ]
+                },
+                "to": {
+                  "model": "Entitlement",
+                  "namespace": "public"
+                }
+              },
               "favorites": {
                 "cardinality": "1:N",
                 "on": {
@@ -7538,6 +7569,22 @@
                     "namespaceId": "public",
                     "tableName": "order"
                   }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "productId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "entitlement"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "product"
+                  }
                 }
               ],
               "indexes": [
@@ -7547,6 +7594,14 @@
                   ],
                   "name": "entitlement_orderId_idx_d284871b",
                   "prefix": "entitlement_orderId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "productId"
+                  ],
+                  "name": "entitlement_productId_idx_5858600a",
+                  "prefix": "entitlement_productId_idx",
                   "unique": false
                 },
                 {
@@ -7690,7 +7745,20 @@
                   "id"
                 ]
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "userId",
+                    "productId"
+                  ]
+                },
+                {
+                  "columns": [
+                    "userId",
+                    "resourceId"
+                  ]
+                }
+              ]
             },
             "lesson": {
               "columns": {
@@ -7790,7 +7858,14 @@
                   "id"
                 ]
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "sectionId",
+                    "slug"
+                  ]
+                }
+              ]
             },
             "lessonProgress": {
               "columns": {
@@ -9739,7 +9814,20 @@
                   "id"
                 ]
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "userId",
+                    "productId"
+                  ]
+                },
+                {
+                  "columns": [
+                    "userId",
+                    "resourceId"
+                  ]
+                }
+              ]
             },
             "role": {
               "columns": {
@@ -10171,7 +10259,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d932f3a867164a66104e1e20cb1c5037ff9e9b724295b100dec41a0cfe406105"
+    "storageHash": "873cba2a6d29e7195f76132e4a8e7d296c77b3493c036cabbef7e6f254c7a44f"
   },
   "capabilities": {
     "postgres": {

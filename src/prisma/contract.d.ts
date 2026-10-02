@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'d932f3a867164a66104e1e20cb1c5037ff9e9b724295b100dec41a0cfe406105'>;
+  StorageHashBase<'873cba2a6d29e7195f76132e4a8e7d296c77b3493c036cabbef7e6f254c7a44f'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
@@ -2282,11 +2282,12 @@ export namespace Models {
     featured: CodecTypes['pg/bool@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    entitlements: public_Entitlement[];
     favorites: public_Favorite[];
     orderItems: public_OrderItem[];
     prices: public_ProductPrice[];
     reviews: public_Review[];
-    readonly [RelationKeys]?: 'favorites' | 'orderItems' | 'prices' | 'reviews';
+    readonly [RelationKeys]?: 'entitlements' | 'favorites' | 'orderItems' | 'prices' | 'reviews';
   };
   export type public_ProductPrice = {
     id: CodecTypes['pg/int4@1']['output'];
@@ -2370,9 +2371,10 @@ export namespace Models {
     grantedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     expiresAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     order: public_Order | null;
+    product: public_Product | null;
     resource: public_LibraryResource | null;
     user: public_User;
-    readonly [RelationKeys]?: 'order' | 'resource' | 'user';
+    readonly [RelationKeys]?: 'order' | 'product' | 'resource' | 'user';
   };
   export type public_Favorite = {
     id: CodecTypes['pg/int4@1']['output'];
@@ -4005,6 +4007,12 @@ type ContractBase = Omit<
                   readonly unique: false;
                 },
                 {
+                  readonly name: 'entitlement_productId_idx_5858600a';
+                  readonly prefix: 'entitlement_productId_idx';
+                  readonly columns: readonly ['productId'];
+                  readonly unique: false;
+                },
+                {
                   readonly name: 'entitlement_orderId_idx_d284871b';
                   readonly prefix: 'entitlement_orderId_idx';
                   readonly columns: readonly ['orderId'];
@@ -4048,6 +4056,18 @@ type ContractBase = Omit<
                     readonly columns: readonly ['id'];
                   };
                 },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'entitlement';
+                    readonly columns: readonly ['productId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'product';
+                    readonly columns: readonly ['id'];
+                  };
+                },
               ];
             };
             readonly favorite: {
@@ -4084,14 +4104,11 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
+              uniques: readonly [
+                { readonly columns: readonly ['userId', 'productId'] },
+                { readonly columns: readonly ['userId', 'resourceId'] },
+              ];
               indexes: readonly [
-                {
-                  readonly name: 'favorite_userId_idx_a489d58a';
-                  readonly prefix: 'favorite_userId_idx';
-                  readonly columns: readonly ['userId'];
-                  readonly unique: false;
-                },
                 {
                   readonly name: 'favorite_productId_idx_5858600a';
                   readonly prefix: 'favorite_productId_idx';
@@ -4102,6 +4119,12 @@ type ContractBase = Omit<
                   readonly name: 'favorite_resourceId_idx_72964925';
                   readonly prefix: 'favorite_resourceId_idx';
                   readonly columns: readonly ['resourceId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'favorite_userId_idx_a489d58a';
+                  readonly prefix: 'favorite_userId_idx';
+                  readonly columns: readonly ['userId'];
                   readonly unique: false;
                 },
               ];
@@ -4210,7 +4233,7 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
+              uniques: readonly [{ readonly columns: readonly ['sectionId', 'slug'] }];
               indexes: readonly [
                 {
                   readonly name: 'lesson_sectionId_idx_5d1ea56b';
@@ -5765,7 +5788,10 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
+              uniques: readonly [
+                { readonly columns: readonly ['userId', 'productId'] },
+                { readonly columns: readonly ['userId', 'resourceId'] },
+              ];
               indexes: readonly [
                 {
                   readonly name: 'review_productId_idx_5858600a';
@@ -7617,6 +7643,18 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
+              readonly product: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Product';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['productId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
               readonly resource: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -8786,6 +8824,17 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly entitlements: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Entitlement';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['productId'];
+                };
+              };
               readonly favorites: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
