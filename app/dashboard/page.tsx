@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getCurrentUser } from "@/src/lib/auth/session";
+import { getCurrentUser } from "@/src/lib/authentification/session";
 export default async function DashboardPage() {
   const user = await getCurrentUser();
 
