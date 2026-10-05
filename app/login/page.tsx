@@ -41,7 +41,7 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/tableau de bord");
       router.refresh();
     } catch {
       setError("Une erreur réseau est survenue.");
