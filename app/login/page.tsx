@@ -120,7 +120,7 @@ export default function LoginPage() {
 
         <p className="auth-switch">
           Vous n’avez pas encore de compte ?{" "}
-          <Link href="/register">
+          <Link href="/registre">
             Créer un compte
           </Link>
         </p>
