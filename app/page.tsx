@@ -183,7 +183,9 @@ export default function Home() {
 
                 <p>{description}</p>
 
-                <a href="/login">
+                <a href="/se connecter">
+  Accéder à l’espace →
+</a>
                   Accéder à l’espace →
                 </a>
               </article>
