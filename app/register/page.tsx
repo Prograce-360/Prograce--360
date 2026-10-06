@@ -54,7 +54,7 @@ export default function RegisterPage() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/tableau de bord");
       router.refresh();
     } catch {
       setError("Une erreur réseau est survenue.");
@@ -184,7 +184,7 @@ export default function RegisterPage() {
 
         <p className="auth-switch">
           Vous avez déjà un compte?{" "}
-          <Link href="/login">
+          <Link href="/se connecter">
             Se connecter
           </Link>
         </p>
