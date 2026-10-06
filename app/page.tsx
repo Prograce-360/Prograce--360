@@ -184,8 +184,6 @@ export default function Home() {
                 <p>{description}</p>
 
                 <a href="/se connecter">
-  Accéder à l’espace →
-</a>
                   Accéder à l’espace →
                 </a>
               </article>
@@ -229,13 +227,13 @@ export default function Home() {
           </p>
 
           <div className="actions">
-            <a href="/register" className="button">
-              Commencer avec PROGRACE →
-            </a>
+            <a href="/registre" className="button">
+  Commencer avec PROGRACE →
+</a>
 
-            <a href="/login" className="button outline">
-              Mon espace
-            </a>
+            <a href="/se connecter" className="button outline">
+  Mon espace
+</a>
           </div>
         </div>
       </section>
