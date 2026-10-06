@@ -21,16 +21,19 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/authentification/se connecter"), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      const response = await fetch(
+  "/api/authentification/se connecter",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email,
+      password,
+    }),
+  },
+);
 
       const data = await response.json();
 
