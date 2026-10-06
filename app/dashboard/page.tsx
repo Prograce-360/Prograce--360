@@ -5,7 +5,7 @@ export default async function DashboardPage() {
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect("/login");
+  redirect("/se connecter");
   }
 
   const fullName =
