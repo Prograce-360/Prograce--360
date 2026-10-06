@@ -81,9 +81,9 @@ export default function Home() {
           🤖 Assistant
         </a>
 
-        <a href="/login" className="button outline">
-          Mon compte
-        </a>
+        <a href="/se connecter" className="button outline">
+  Mon compte
+</a>
       </header>
 
       {/* HERO */}
