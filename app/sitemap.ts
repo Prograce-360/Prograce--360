@@ -4,10 +4,11 @@ const baseUrl = "https://prograce.cd";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
-    "",
-    "/login",
-    "/register",
-  ];
+  "",
+  "/se connecter",
+  "/registre",
+  "/tableau de bord",
+];
 
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,
