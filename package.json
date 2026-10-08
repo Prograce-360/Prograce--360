@@ -11,7 +11,6 @@
     "contract:emit": "prisma contract emit"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.10.0",
     "dotenv": "^17.4.2",
     "next": "16.3.4",
     "pg": "^8.23.0",
