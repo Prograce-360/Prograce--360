@@ -1,64 +1,45 @@
 name: PROGRACE 360 CI
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+push:
+branches:
+- main
+pull_request:
+branches:
+- main
 
 permissions:
-  contents: write
+contents: write
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+build:
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+steps:
+  - name: Checkout
+    uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
+  - name: Setup Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: 22
+      cache: npm
 
-      - name: Install dependencies
-        run: npm ci
+  - name: Install dependencies
+    run: npm ci
 
-      - name: Verify authentication files
-        run: |
-          echo "=== Current commit ==="
-          git rev-parse HEAD
+  - name: Verify authentication files
+    run: |
+      echo "=== Current commit ==="
+      git rev-parse HEAD
+      echo "=== Authentication files ==="
+      git ls-files | grep -E '^src/lib/(auth|authentification)/' || true
 
-          echo "=== Branch ==="
-          git branch --show-current
+  - name: Generate Prisma contract
+    run: npm run contract:emit
 
-          echo "=== Authentication paths tracked by Git ==="
-          git ls-files | grep -E '^src/lib/(auth|authentification)/' || true
+  - name: Verify TypeScript
+    run: npx tsc --noEmit
 
-          echo "=== src/lib tree ==="
-          find src/lib -maxdepth 2 -type f -print | sort
-
-      - name: Generate Prisma contract
-        run: npm run contract:emit
-
-      - name: Save generated Prisma contract
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add src/prisma/contract.json src/prisma/contract.d.ts
-
-          if git diff --cached --quiet; then
-            echo "No generated Prisma changes."
-          else
-            git commit -m "chore: regenerate Prisma contract"
-            git push
-          fi
-
-      - name: Build
-        run: npm run build
+  - name: Build
+    run: npm run build
