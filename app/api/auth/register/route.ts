@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 
-import { hashPassword } from "@/src/lib/authentification/mot_de_passe";
+import { hashPassword } from "@/src/lib/auth/mot_de_passe";
 import {
   createUser,
   findUserByEmail,
   findUserByUsername,
 } from "@/src/lib/auth/utilisateur";
-import { createSession } from "@/src/lib/authentification/session";
+import { createSession } from "@/src/lib/auth/session";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
