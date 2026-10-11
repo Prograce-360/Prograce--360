@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
-
-import { hashPassword } from "@/src/lib/auth/mot_de_passe";
+import { hashPassword } from "@/src/lib/auth/password";
 import {
   createUser,
   findUserByEmail,
   findUserByUsername,
-} from "@/src/lib/auth/utilisateur";
+} from "@/src/lib/auth/user";
 import { createSession } from "@/src/lib/auth/session";
 export async function POST(request: Request) {
   try {
