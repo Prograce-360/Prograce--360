@@ -5,7 +5,7 @@ import {
   createUser,
   findUserByEmail,
   findUserByUsername,
-} from "@/src/lib/authentification/utilisateur";
+} from "@/src/lib/auth/utilisateur";
 import { createSession } from "@/src/lib/authentification/session";
 export async function POST(request: Request) {
   try {
