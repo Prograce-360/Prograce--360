@@ -81,9 +81,9 @@ export default function Home() {
           🤖 Assistant
         </a>
 
-        <a href="/se connecter" className="button outline">
-  Mon compte
-</a>
+        <a href="/login" className="button outline">
+          Mon compte
+        </a>
       </header>
 
       {/* HERO */}
@@ -183,7 +183,7 @@ export default function Home() {
 
                 <p>{description}</p>
 
-                <a href="/se connecter">
+                <a href="/login">
                   Accéder à l’espace →
                 </a>
               </article>
@@ -227,13 +227,12 @@ export default function Home() {
           </p>
 
           <div className="actions">
-            <a href="/registre" className="button">
-  Commencer avec PROGRACE →
-</a>
-
-            <a href="/se connecter" className="button outline">
-  Mon espace
-</a>
+            <a href="/register" className="button">
+              Commencer avec PROGRACE →
+            </a>
+            <a href="/login" className="button outline">
+              Mon compte
+            </a>
           </div>
         </div>
       </section>
