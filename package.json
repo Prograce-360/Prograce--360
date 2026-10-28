@@ -4,13 +4,12 @@
   "version": "0.1.0",
   "private": true,
  "scripts": {
-"dev": "next dev",
-"prebuild": "prisma contract emit",
-"build": "next build",
-"start": "next start",
-"lint": "eslint",
-"contract:emit": "prisma contract emit"
-},
+   "dev": "next dev",
+   "prebuild": "prisma contract emit",
+   "build": "next build",
+   "start": "next start",
+   "lint": "eslint",
+   "contract:emit": "prisma contract emit"
   },
   "dependencies": {
     "dotenv": "^17.4.2",
