@@ -1,18 +1,14 @@
 import { db } from "@/src/prisma/db";
 
-export async function findUserByEmail(
-  email: string,
-) {
+export async function findUserByEmail( email: string, ) 
+{
   return db.orm.public.User
-    .where({
-      email: email.toLowerCase(),
-    })
+    .where({ email: email.toLowerCase(), })
     .first();
 }
 
-export async function findUserByUsername(
-  username: string,
-) {
+export async function findUserByUsername( username: string, )
+{
   return db.orm.public.User
     .where({ username })
     .first();
@@ -24,7 +20,8 @@ export async function createUser(input: {
   firstName?: string;
   lastName?: string;
   username?: string;
-}) {
+}) 
+{
   return db.orm.public.User.create({
     email: input.email.toLowerCase(),
     passwordHash: input.passwordHash,
