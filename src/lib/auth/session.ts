@@ -1,29 +1,27 @@
 import { createHash, randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
-
 import { db } from "@/src/prisma/db";
-
 export const SESSION_COOKIE = "prograce_session";
-
 const SESSION_DAYS = 30;
 
-function hashToken(token: string): string {
+function hashToken(token: string): string 
+{
   return createHash("sha256")
     .update(token)
     .digest("hex");
 }
 
-export async function createSession(userId: number) {
+export async function createSession(userId: number) 
+{
   const token = randomBytes(32).toString("hex");
-
   const tokenHash = hashToken(token);
+  const expiresAt = new Date
+    ( Date.now() +
+     SESSION_DAYS * 24 * 60 * 60 * 1000, )
+    .toISOString();
 
-  const expiresAt = new Date(
-    Date.now() +
-      SESSION_DAYS * 24 * 60 * 60 * 1000,
-  ).toISOString();
-
-  await db.orm.public.UserSession.create({
+  await db.orm.public.UserSession.create
+  ({
     userId,
     tokenHash,
     expiresAt,
@@ -94,7 +92,7 @@ export async function getUserFromSessionToken(
 
 export async function getCurrentUser() {
   const token = await getSessionToken();
-
+  
   return getUserFromSessionToken(token);
 }
 
