@@ -8,8 +8,7 @@ import contractJson from './contract.json' with { type: 'json' };
 
 const contract = contractFromJson<Contract>(contractJson);
 
-export const db = postgres
-({
+export const db = postgres({
   contract,
   url: process.env['DATABASE_URL']!,
 });
